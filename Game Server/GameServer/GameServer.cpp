@@ -129,7 +129,7 @@ void Worker_Thread() {
 			delete over;
 		}
 		else if ( OP_DO_AI == over->event_type ) {
-			if ( g_clients[ci].npc_level != 0 ) {
+			if ( g_clients[ci].level != 0 && g_clients[ci].npc_Client == -1 ) {
 				NPC_Random_Move( ci );
 			}
 			delete over;
@@ -211,8 +211,9 @@ void Accept_Thread() {
 		g_clients[new_id].recv_over.event_type = OP_RECV;
 		g_clients[new_id].recv_over.wsabuf.buf = reinterpret_cast<CHAR *>(g_clients[new_id].recv_over.IOCP_buf);
 		g_clients[new_id].recv_over.wsabuf.len = sizeof( g_clients[new_id].recv_over.IOCP_buf );
-		g_clients[new_id].x = 17;
-		g_clients[new_id].y = 50;
+		g_clients[new_id].x = 9;
+		g_clients[new_id].y = 9;
+		g_clients[new_id].level = 1;
 		g_clients[new_id].hp = getRandomNumber( 100, 1000 );
 		g_clients[new_id].direction = 2;
 		g_clients[new_id].movement = 0;

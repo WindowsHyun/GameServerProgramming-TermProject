@@ -10,7 +10,7 @@ void read_map() {
 	int x = 0, y = 0;
 	pFile = fopen( "CollisionCheck_Data\\Tile1.txt", "r" );
 
-	while ( !feof( pFile ) ) {
+	while ( !feof( pFile ) ) { 
 		fscanf( pFile, "%d ", &map[x][y] );
 		x += 1;
 		if ( x >= Game_Width ) {
@@ -70,10 +70,7 @@ bool CollisionCheck( int ci, int dir ) {
 	}
 
 	// 272, 68, 191, 13, 14, 43, 44, 752
-	if ( map[m_x][m_y] != 68 && map[m_x][m_y] != 191 && map[m_x][m_y] != 1483
-		&& map[m_x][m_y] != 1453 && map[m_x][m_y] != 272 && map[m_x][m_y] != 13 && map[m_x][m_y] != 14
-		&& map[m_x][m_y] != 43 && map[m_x][m_y] != 44 && map[m_x][m_y] != 752 && map[m_x][m_y] != 140
-		&& map[m_x][m_y] != 241 && map[m_x][m_y] != 193 && map[m_x][m_y] != 203 ) {
+	if ( map[m_x][m_y] == 152  ) {
 		//printf( "%d Ãæµ¹0\t", map[m_x][m_y] );
 		return false;
 	}

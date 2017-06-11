@@ -66,6 +66,7 @@ void SendPutPlayerPacket( int client, int object ) {
 	packet.x = g_clients[object].x;
 	packet.y = g_clients[object].y;
 	packet.hp = g_clients[object].hp;
+	packet.level = g_clients[object].level;
 	packet.direction = g_clients[object].direction;
 	packet.movement = g_clients[object].movement;
 
@@ -80,6 +81,7 @@ void SendPositionPacket( int client, int object ) {
 	packet.x = g_clients[object].x;
 	packet.y = g_clients[object].y;
 	packet.hp = g_clients[object].hp;
+	packet.level = g_clients[object].level;
 	packet.direction = g_clients[object].direction;
 	packet.movement = g_clients[object].movement;
 	SendPacket( client, &packet );

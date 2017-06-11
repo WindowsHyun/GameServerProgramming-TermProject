@@ -5,7 +5,7 @@ CImage m_image; // Map 이미지
 CImage Ch_image[5]; // 본인 캐릭터
 CImage You_image[5]; // 상대방 캐릭터
 CImage Monster_image[10]; // 몬스터 캐릭터
-CImage Effect_image[4]; // 공격 이펙트
+CImage Effect_image[5]; // 공격 이펙트
 char PrintData[100];
 
 void init_Image() {
@@ -29,6 +29,7 @@ void init_Image() {
 	Effect_image[1].Load( "Image\\Effect\\Attack_Effect2.png" );
 	Effect_image[2].Load( "Image\\Effect\\Attack_Effect3.png" );
 	Effect_image[3].Load( "Image\\Effect\\Attack_Effect4.png" );
+	Effect_image[4].Load( "Image\\Effect\\Attack_Monster.png" );
 }
 
 void cimage_draw( HDC hdc, int x, int y, int r_x, int r_y ) {

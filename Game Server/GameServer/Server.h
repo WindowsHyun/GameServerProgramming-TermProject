@@ -40,7 +40,19 @@ using namespace std::chrono;
 #define VIEW_RADIUS   10														// Viwe 거리
 #define NPC_RADIUS   5														// Viwe 거리
 #define NPC_START  1000
-#define MAX_NPC 1050															// NPC 갯수
+#define Monster_1 1050															// Monster01
+#define Monster_2 1080															// Monster02
+#define Monster_3 1100															// Monster03
+#define Monster_4 1120															// Monster04
+#define Monster_5 1140															// Monster05
+#define Monster_6 1190															// Monster06
+#define Monster_7 1240															// Monster07
+#define Monster_8 1340															// Monster08
+#define Monster_9 1440															// Monster09
+#define Monster_10 1540															// Monster10
+#define Monster_11 1590															// Monster11
+#define Monster_12 1640															// Monster12
+#define MAX_NPC 3000
 #define MAX_STR_SIZE  100
 //---------------------------------------------------------------------------------------------
 
@@ -71,6 +83,8 @@ void check_Attack( int ci, char * ptr );
 void Move_NPCtoClient( int ci, int npc );
 void NPC_Responder( int id );
 
+void init_Monster1();
+void init_Monster2();
 
 int API_get_x( lua_State *L );
 int API_get_y( lua_State *L );
@@ -103,6 +117,7 @@ struct CLIENT {
 	int x;
 	int y;
 	int hp;
+	int level;
 	int direction = 2;
 	int movement = 0;
 	bool connect;
@@ -117,7 +132,6 @@ struct CLIENT {
 
 	std::chrono::high_resolution_clock::time_point last_move_time; // npc의 움직임시간 제어 + 스피드핵 방지
 	bool is_active; // npc가 현재 움직였나 안움직였나 판단하기 위함
-	int npc_level = 0; // 몬스터의 레벨을 나타낸다.
 	int npc_Attack = 0; // NPC의 공격 데미지
 	int npc_Client = -1; // NPC가 어떤 클라이언트를 따라갈지
 	int npc_dir = -1; // NPC가 클라이언트의 어디에 있을지

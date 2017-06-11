@@ -23,7 +23,7 @@
 #define SightSeeHeight 20
 
 #define NPC_START  1000
-#define MAX_NPC 50															// NPC 갯수
+#define MAX_NPC 2000															// NPC 갯수
 #define MAX_Chat 10
 #define MAX_Chat_View 100
 #define MAX_Skill_View 10
@@ -40,7 +40,7 @@ extern CImage m_image; // Map 이미지
 extern CImage Ch_image[5]; // 본인 캐릭터
 extern CImage You_image[5]; // 상대방 캐릭터
 extern CImage Monster_image[10]; // 몬스터 캐릭터
-extern CImage Effect_image[4]; // 공격 이펙트
+extern CImage Effect_image[5]; // 공격 이펙트
 
 void init_Image(); // 이미지 함수 로드
 void cimage_draw( HDC hdc, int x, int y, int r_x, int r_y );
@@ -66,6 +66,7 @@ typedef struct BOB_TYP {
 	int x, y;          // position bitmap will be displayed at
 	int attr;           // attributes pertaining to the object (general)
 	int hp;
+	int level;
 	int direction = 2;		// 캐릭터 방향
 	int movement = 0;	// 캐릭터 움직임
 	int skill_num = -1;

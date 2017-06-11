@@ -28,6 +28,7 @@ struct sc_packet_put_player {
 	BOOL x;
 	BOOL y;
 	BOOL hp;
+	BOOL level;
 	BOOL direction;
 	BOOL movement;
 };
@@ -39,6 +40,7 @@ struct sc_packet_pos {
 	BOOL x;
 	BOOL y;
 	BOOL hp;
+	BOOL level;
 	BOOL direction;
 	BOOL movement;
 };

@@ -60,7 +60,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpszCmd
 	WndClass.lpszClassName = "Window Class Name";
 
 	RegisterClass( &WndClass );
-	hwnd = CreateWindow( "Window Class Name", "2012180004 권창현", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800, 800, NULL, NULL, hInstance, NULL );
+	hwnd = CreateWindow( "Window Class Name", "2012180004 권창현", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 820, 840, NULL, NULL, hInstance, NULL );
 	main_window_handle = hwnd;
 	main_instance = hInstance;
 	init();
@@ -214,7 +214,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 
 		for ( int i = 0; i < MAX_NPC; ++i ) {
 			if ( (npc[i].attr & BOB_ATTR_VISIBLE) && npc[i].hp > 0 ) {
-				Monster_Draw( mem0dc, npc[i].x - g_left_x, npc[i].y - g_top_y, 0, npc[i].hp );
+				Monster_Draw( mem0dc, npc[i].x - g_left_x, npc[i].y - g_top_y, npc[i].level, npc[i].hp );
 			}
 		}
 
@@ -222,7 +222,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 			AttackEffect_Draw( mem0dc, player.x - g_left_x, player.y - g_top_y, player.skill_num );
 		}
 
-		Character_Draw( mem0dc, 7, 7, player.direction, player.movement, player.hp );
+		Character_Draw( mem0dc, 9, 9, player.direction, player.movement, player.hp );
 
 		SetTextColor( mem0dc, RGB( 255, 0, 0 ) );
 		SetBkMode( mem0dc, OPAQUE );
@@ -370,6 +370,7 @@ void ProcessPacket( char *ptr )
 			player.x = my_packet->x;
 			player.y = my_packet->y;
 			player.hp = my_packet->hp;
+			player.level = my_packet->level;
 			player.direction = my_packet->direction;
 			player.attr |= BOB_ATTR_VISIBLE;
 		}
@@ -377,12 +378,14 @@ void ProcessPacket( char *ptr )
 			skelaton[id].x = my_packet->x;
 			skelaton[id].y = my_packet->y;
 			skelaton[id].hp = my_packet->hp;
+			skelaton[id].level = my_packet->level;
 			skelaton[id].attr |= BOB_ATTR_VISIBLE;
 		}
 		else {
 			npc[id - NPC_START].x = my_packet->x;
 			npc[id - NPC_START].y = my_packet->y;
 			npc[id - NPC_START].hp = my_packet->hp;
+			npc[id - NPC_START].level = my_packet->level;
 			npc[id - NPC_START].attr |= BOB_ATTR_VISIBLE;
 #if (DebugMod == TRUE)
 			printf( "%d\t", id - NPC_START );
@@ -396,8 +399,8 @@ void ProcessPacket( char *ptr )
 		sc_packet_pos *my_packet = reinterpret_cast<sc_packet_pos *>(ptr);
 		int other_id = my_packet->id;
 		if ( other_id == g_myid ) {
-			g_left_x = my_packet->x - 7;
-			g_top_y = my_packet->y - 7;
+			g_left_x = my_packet->x - 9;
+			g_top_y = my_packet->y - 9;
 			player.x = my_packet->x;
 			player.y = my_packet->y;
 			player.hp = my_packet->hp;

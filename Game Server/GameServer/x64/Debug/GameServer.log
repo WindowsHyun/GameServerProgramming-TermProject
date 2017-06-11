@@ -1,3 +1,8 @@
-﻿  NPC.cpp
-  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Server\x64\Debug\GameServer.exe
-  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Server\x64\Debug\GameServer.pdb (Full PDB)
+﻿  GameServer.cpp
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game server\gameserver\gameserver.cpp(76): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game server\gameserver\gameserver.cpp(82): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game server\gameserver\gameserver.cpp(133): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game server\gameserver\gameserver.cpp(151): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game server\gameserver\gameserver.cpp(155): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Game Server\x64\Debug\GameServer.exe
+  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Game Server\x64\Debug\GameServer.pdb (Full PDB)
