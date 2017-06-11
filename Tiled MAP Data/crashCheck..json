@@ -1,0 +1,31 @@
+{ "height":5,
+ "layers":[
+        {
+         "data":[272, 68, 191, 13, 14, 43, 44, 752, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "height":5,
+         "name":"Tile Layer 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":5,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tileheight":16,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "source":"Default.tsx"
+        }, 
+        {
+         "firstgid":481,
+         "source":"Dungeon.tsx"
+        }],
+ "tilewidth":16,
+ "type":"map",
+ "version":"2017.05.26",
+ "width":5
+}
