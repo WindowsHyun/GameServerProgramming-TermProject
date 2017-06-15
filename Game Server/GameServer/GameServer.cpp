@@ -14,10 +14,13 @@ int getRandomNumber( int min, int max ) {
 HANDLE g_hiocp;
 SOCKET g_ssocket;
 CLIENT g_clients[MAX_NPC];
+std::chrono::high_resolution_clock::time_point serverTimer;
 
 int main() {
 	std::vector <std::thread * > worker_threads;
 	init();
+	check_Player_Level(0);
+	serverTimer = high_resolution_clock::now();
 
 	std::thread TimerThread{ Timer_Thread };
 
@@ -129,6 +132,7 @@ void Worker_Thread() {
 			delete over;
 		}
 		else if ( OP_DO_AI == over->event_type ) {
+			check_Monster_HP( ci );
 			if ( g_clients[ci].level != 0 && g_clients[ci].npc_Client == -1 ) {
 				NPC_Random_Move( ci );
 			}
@@ -136,6 +140,8 @@ void Worker_Thread() {
 		}
 		else if ( E_PLAYER_MOVE_NOTIFY == over->event_type ) {
 			g_clients[ci].vl_lock.lock();
+			// 여기서의 ci 는 npc 이고, target_id 는 client 아이디 이다.
+			//std::cout << "Hi : " << ci << std::endl;
 			lua_State *L = g_clients[ci].L;
 			lua_getglobal( L, "player_move_notify" );
 			lua_pushnumber( L, over->target_id );
@@ -214,7 +220,9 @@ void Accept_Thread() {
 		g_clients[new_id].x = 9;
 		g_clients[new_id].y = 9;
 		g_clients[new_id].level = 1;
+		g_clients[new_id].hp_timer = 0;
 		g_clients[new_id].hp = getRandomNumber( 100, 1000 );
+		g_clients[new_id].Max_hp = g_clients[new_id].hp;
 		g_clients[new_id].direction = 2;
 		g_clients[new_id].movement = 0;
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -272,6 +280,7 @@ void Shutdown_Server() {
 void DisconnectClient( int ci ) {
 	closesocket( g_clients[ci].client_socket );
 	g_clients[ci].connect = false;
+
 	std::unordered_set<int> lvl;
 	g_clients[ci].vl_lock.lock();//LOCK
 	lvl = g_clients[ci].view_list;
@@ -291,6 +300,7 @@ void DisconnectClient( int ci ) {
 	g_clients[ci].vl_lock.lock();//LOCK
 	g_clients[ci].view_list.clear();
 	g_clients[ci].vl_lock.unlock();//UNLOCK
+	std::cout << "Disconnect Client : " << ci << std::endl;
 }
 
 void ProcessPacket( int ci, char *packet ) {
@@ -298,27 +308,35 @@ void ProcessPacket( int ci, char *packet ) {
 	switch ( packet[1] ) {
 	case CS_UP:
 		g_clients[ci].direction = CS_UP;
-		g_clients[ci].movement += 1;
-		if ( g_clients[ci].y > 0 && CollisionCheck( ci, CS_UP ) )
+		if ( g_clients[ci].y > 0 && CollisionCheck( ci, CS_UP ) ) {
 			g_clients[ci].y--;
+			g_clients[ci].movement += 1;
+			g_clients[ci].last_move_time = std::chrono::high_resolution_clock::now();
+		}
 		break;
 	case CS_DOWN:
 		g_clients[ci].direction = CS_DOWN;
-		g_clients[ci].movement += 1;
-		if ( g_clients[ci].y < Game_Height - 1 && CollisionCheck( ci, CS_DOWN ) )
+		if ( g_clients[ci].y < Game_Height - 1 && CollisionCheck( ci, CS_DOWN ) ) {
 			g_clients[ci].y++;
+			g_clients[ci].movement += 1;
+			g_clients[ci].last_move_time = std::chrono::high_resolution_clock::now();
+		}
 		break;
 	case CS_LEFT:
 		g_clients[ci].direction = CS_LEFT;
-		g_clients[ci].movement += 1;
-		if ( g_clients[ci].x > 0 && CollisionCheck( ci, CS_LEFT ) )
+		if ( g_clients[ci].x > 0 && CollisionCheck( ci, CS_LEFT ) ) {
 			g_clients[ci].x--;
+			g_clients[ci].movement += 1;
+			g_clients[ci].last_move_time = std::chrono::high_resolution_clock::now();
+		}
 		break;
 	case CS_RIGHT:
 		g_clients[ci].direction = CS_RIGHT;
-		g_clients[ci].movement += 1;
-		if ( g_clients[ci].x < Game_Width - 1 && CollisionCheck( ci, CS_RIGHT ) )
+		if ( g_clients[ci].x < Game_Width - 1 && CollisionCheck( ci, CS_RIGHT ) ) {
 			g_clients[ci].x++;
+			g_clients[ci].movement += 1;
+			g_clients[ci].last_move_time = std::chrono::high_resolution_clock::now();
+		}
 		break;
 	case CS_Attack:
 		//printf( "%d가 공격 %d만큼\n",ci, my_packet->damage );
@@ -425,13 +443,13 @@ void ProcessPacket( int ci, char *packet ) {
 			g_clients[ci].view_list.erase( d );
 		g_clients[ci].vl_lock.unlock();
 
-		//for ( auto npc : new_view_list ) {
-		//	if ( false == Is_NPC( npc ) ) continue;
-		//	OverlappedEx *over = new OverlappedEx;
-		//	over->event_type = E_PLAYER_MOVE_NOTIFY;
-		//	over->target_id = ci;
-		//	PostQueuedCompletionStatus( g_hiocp, 1, npc, &over->over );
-		//}
+		for ( auto npc : new_view_list ) {
+			if ( false == Is_NPC( npc ) ) continue;
+			OverlappedEx *over = new OverlappedEx;
+			over->event_type = E_PLAYER_MOVE_NOTIFY;
+			over->target_id = ci;
+			PostQueuedCompletionStatus( g_hiocp, 1, npc, &over->over );
+		}
 }
 
 bool Distance( int me, int  you, int Radius ) {
@@ -447,6 +465,10 @@ void Timer_Thread() {
 	for ( ;;) {
 		Sleep( 10 );
 		for ( ;;) {
+			if ( high_resolution_clock::now() - serverTimer >= 1s ) {
+				check_Player_HP();
+				serverTimer = high_resolution_clock::now();
+			}
 			tq_lock.lock();
 			if ( 0 == timer_queue.size() ) {
 				tq_lock.unlock();
@@ -477,4 +499,53 @@ void Timer_Thread() {
 bool IsPlayer( int ci ) {
 	if ( ci < MAX_Client ) return true;
 	else return false;
+}
+
+void check_Player_HP() {
+	for ( int ci = 0; ci < MAX_Client; ++ci ) {
+		if ( g_clients[ci].connect == false ) continue;
+		if ( g_clients[ci].hp <= 0 ) {
+			// HP가 0이 되었을경우 초기 위치로 이동 & 위치 보내주기
+			g_clients[ci].x = 9;
+			g_clients[ci].y = 9;
+			g_clients[ci].hp = g_clients[ci].Max_hp;
+			SendPositionPacket( ci, ci );
+		}
+
+		//5초마다 10% hp 회복
+		if ( g_clients[ci].hp_timer >= 5 ) {
+			g_clients[ci].hp_timer = 0;
+			if ( g_clients[ci].Max_hp <= g_clients[ci].hp + (g_clients[ci].Max_hp % 10) ) {
+				g_clients[ci].hp = g_clients[ci].Max_hp;
+			}
+			else {
+				g_clients[ci].hp += g_clients[ci].Max_hp % 10;
+			}
+		}
+		g_clients[ci].hp_timer += 1;
+		check_Player_Level( ci );
+		SendInfoPacket( ci, ci );
+	}
+}
+
+void check_Player_Level( int ci ) {
+	// 1레벨 100
+	// 2레벨 200
+	// 3레벨 400
+	unsigned long long exp_data = 100;
+
+	//for ( int i = 1; i < 50; ++i ) {
+	//	printf( "%d레벨 : %lld\n", i , exp_data );
+	//	exp_data += exp_data;
+	//}
+
+	for ( int i = 1; i < g_clients[ci].level; ++i ) {
+		exp_data += exp_data;
+	}
+
+	if ( g_clients[ci].exp >= exp_data ) {
+		g_clients[ci].exp -= exp_data;
+		g_clients[ci].level += 1;
+	}
+
 }

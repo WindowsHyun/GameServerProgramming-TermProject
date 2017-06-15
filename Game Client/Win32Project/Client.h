@@ -44,7 +44,7 @@ extern CImage Effect_image[5]; // 공격 이펙트
 
 void init_Image(); // 이미지 함수 로드
 void cimage_draw( HDC hdc, int x, int y, int r_x, int r_y );
-void Character_Draw( HDC hdc, int x, int y, int direction, int movement, int hp );
+void Character_Draw( HDC hdc, int x, int y, int direction, int movement, int hp, int exp, int level );
 void Character_You_Draw( HDC hdc, int x, int y, int direction, int movement, int hp );
 void Monster_Draw( HDC hdc, int x, int y, int Kind, int hp );
 void AttackEffect_Draw( HDC hdc, int x, int y, int Kind );
@@ -66,6 +66,7 @@ typedef struct BOB_TYP {
 	int x, y;          // position bitmap will be displayed at
 	int attr;           // attributes pertaining to the object (general)
 	int hp;
+	int exp;
 	int level;
 	int direction = 2;		// 캐릭터 방향
 	int movement = 0;	// 캐릭터 움직임

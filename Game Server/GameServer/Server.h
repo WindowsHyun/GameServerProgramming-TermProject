@@ -6,6 +6,8 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#define MoveHACK TRUE
+
 #include <winsock2.h>
 #include <stdio.h>
 #include <iostream>
@@ -31,28 +33,16 @@ using namespace std::chrono;
 #define BUFSIZE    1024
 #define MAX_BUFF_SIZE   4000
 #define MAX_PACKET_SIZE  255
-#define MAX_Client 500
+#define MAX_Client 999
 //---------------------------------------------------------------------------------------------
 // 게임 설정
 #define DebugMod FALSE
 #define Game_Width 300														// 가로
 #define Game_Height 300														// 세로
-#define VIEW_RADIUS   10														// Viwe 거리
-#define NPC_RADIUS   5														// Viwe 거리
+#define VIEW_RADIUS   15														// Viwe 거리
+#define NPC_RADIUS   10														// Viwe 거리
 #define NPC_START  1000
-#define Monster_1 1050															// Monster01
-#define Monster_2 1080															// Monster02
-#define Monster_3 1100															// Monster03
-#define Monster_4 1120															// Monster04
-#define Monster_5 1140															// Monster05
-#define Monster_6 1190															// Monster06
-#define Monster_7 1240															// Monster07
-#define Monster_8 1340															// Monster08
-#define Monster_9 1440															// Monster09
-#define Monster_10 1540															// Monster10
-#define Monster_11 1590															// Monster11
-#define Monster_12 1640															// Monster12
-#define MAX_NPC 3000
+#define MAX_NPC 1790
 #define MAX_STR_SIZE  100
 //---------------------------------------------------------------------------------------------
 
@@ -64,6 +54,7 @@ void init();
 void Worker_Thread();
 void Accept_Thread();
 void Shutdown_Server();
+void SendInfoPacket( int client, int object );
 void SendPutPlayerPacket( int client, int object );
 void SendPacket( int cl, void *packet );
 void DisconnectClient( int ci );
@@ -73,6 +64,8 @@ void SendRemovePlayerPacket( int client, int object );
 void SendChatPacket( int target_client, int object_id, wchar_t *mess );
 bool Distance( int me, int  you, int Radius );
 bool IsPlayer( int ci );
+void check_Player_HP();
+void check_Player_Level( int ci );
 
 void Timer_Thread();
 void init_NPC(); // npc 초기화 함수
@@ -82,12 +75,12 @@ void NPC_Random_Move( int id );
 void check_Attack( int ci, char * ptr );
 void Move_NPCtoClient( int ci, int npc );
 void NPC_Responder( int id );
-
-void init_Monster1();
-void init_Monster2();
+void check_Monster_HP( int id );
 
 int API_get_x( lua_State *L );
 int API_get_y( lua_State *L );
+int print_LUA( lua_State *L );
+int API_get_hp( lua_State *L );
 int API_Send_Message( lua_State *L );
 char * ConvertWCtoC( wchar_t* str );
 wchar_t* ConverCtoWC( char* str );
@@ -104,6 +97,8 @@ bool CollisionCheck( int ci, int dir );
 
 enum OPTYPE { OP_SEND, OP_RECV, OP_DO_AI, E_PLAYER_MOVE_NOTIFY, OP_Attack_Move, OP_Responder };
 enum Event_Type { E_MOVE, E_Attack_Move, E_Responder };
+enum NPC_Type { N_Peace, N_War };
+enum NPC_EXP { No_Send_EXP, Yes_Send_EXP };
 
 struct OverlappedEx {
 	WSAOVERLAPPED over;
@@ -117,7 +112,10 @@ struct CLIENT {
 	int x;
 	int y;
 	int hp;
+	int Max_hp;
+	int hp_timer = 0;
 	int level;
+	int exp;
 	int direction = 2;
 	int movement = 0;
 	bool connect;
@@ -134,7 +132,9 @@ struct CLIENT {
 	bool is_active; // npc가 현재 움직였나 안움직였나 판단하기 위함
 	int npc_Attack = 0; // NPC의 공격 데미지
 	int npc_Client = -1; // NPC가 어떤 클라이언트를 따라갈지
+	int npc_recent_Client = -1; // 가장 최근에 공격을 하려한 Client가 누구인지 확인한다.
 	int npc_dir = -1; // NPC가 클라이언트의 어디에 있을지
+	int npc_type = 0;
 	int npc_x, npc_y; // 죽었을경우 초기 위치로 이동한다.
 
 	lua_State *L;
@@ -159,5 +159,6 @@ public:
 
 extern std::mutex tq_lock; // 우선순위 큐 제어를 위한 락
 extern std::priority_queue <Timer_Event, std::vector<Timer_Event>, comparison> timer_queue; // 우선순위큐, 그냥 쓰면 죽으니까 락을 걸어줘야함
+extern std::chrono::high_resolution_clock::time_point serverTimer;
 
 #endif

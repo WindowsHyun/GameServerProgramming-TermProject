@@ -5,6 +5,7 @@
 #define SC_PUT_PLAYER    2
 #define SC_REMOVE_PLAYER 3
 #define SC_CHAT		4
+#define SC_INFO		5
 
 // 패킷 정보 2
 #define CS_UP    1
@@ -23,8 +24,6 @@ struct sc_packet_put_player {
 	WORD id;
 	BOOL x;
 	BOOL y;
-	BOOL hp;
-	BOOL level;
 	BOOL direction;
 	BOOL movement;
 };
@@ -35,10 +34,17 @@ struct sc_packet_pos {
 	WORD id;
 	BOOL x;
 	BOOL y;
-	BOOL hp;
-	BOOL level;
 	BOOL direction;
 	BOOL movement;
+};
+
+struct sc_packet_info {
+	BYTE size;
+	BYTE type;
+	WORD id;
+	BOOL hp;
+	BOOL level;
+	BOOL exp;
 };
 
 struct sc_packet_remove_player {

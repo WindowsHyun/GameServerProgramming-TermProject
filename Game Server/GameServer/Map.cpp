@@ -69,6 +69,10 @@ bool CollisionCheck( int ci, int dir ) {
 		break;
 	}
 
+	if ( high_resolution_clock::now() - g_clients[ci].last_move_time <= 1s && g_clients[ci].connect == true && MoveHACK == FALSE ) {
+		return false;
+	}
+
 	// 272, 68, 191, 13, 14, 43, 44, 752
 	if ( map[m_x][m_y] == 152  ) {
 		//printf( "%d Ãæµ¹0\t", map[m_x][m_y] );

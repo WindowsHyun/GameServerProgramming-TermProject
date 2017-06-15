@@ -21,6 +21,7 @@ DWORD		in_packet_size = 0;
 int		saved_packet_size = 0;
 int		g_myid;
 int		g_left_x = 0, g_top_y = 0;
+int		skill_timer = 0;
 
 BOB player;				// 플레이어 Unit
 BOB npc[MAX_NPC];      // NPC Unit
@@ -108,22 +109,22 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 
 	case WM_KEYDOWN:
 	{
-		if ( wParam == 'a' || wParam == 'A' ) {
+		if ( (wParam == 'a' || wParam == 'A') && skill_timer == 0 ) {
 			player.skill_num = 0;
 			Send_Attack_Packet( player.skill_num, 5 );
 			break;
 		}
-		if ( wParam == 's' || wParam == 'S' ) {
+		if ( (wParam == 's' || wParam == 'S') && skill_timer == 0 ) {
 			player.skill_num = 1;
 			Send_Attack_Packet( player.skill_num, 10 );
 			break;
 		}
-		if ( wParam == 'd' || wParam == 'D' ) {
+		if ( (wParam == 'd' || wParam == 'D' )&& skill_timer == 0 ) {
 			player.skill_num = 2;
 			Send_Attack_Packet( player.skill_num, 15 );
 			break;
 		}
-		if ( wParam == 'f' || wParam == 'F' ) {
+		if ( (wParam == 'f' || wParam == 'F') && skill_timer == 0 ) {
 			player.skill_num = 3;
 			Send_Attack_Packet( player.skill_num, 20 );
 			break;
@@ -179,6 +180,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 		GetClientRect( hwnd, &rt );
 		init_Image();
 		SetTimer( hwnd, 1, 1, NULL );
+		SetTimer( hwnd, 2, 1000, NULL );
 		break;
 
 	case WM_PAINT:
@@ -222,7 +224,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 			AttackEffect_Draw( mem0dc, player.x - g_left_x, player.y - g_top_y, player.skill_num );
 		}
 
-		Character_Draw( mem0dc, 9, 9, player.direction, player.movement, player.hp );
+		Character_Draw( mem0dc, 9, 9, player.direction, player.movement, player.hp, player.exp, player.level );
 
 		SetTextColor( mem0dc, RGB( 255, 0, 0 ) );
 		SetBkMode( mem0dc, OPAQUE );
@@ -274,6 +276,11 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 				}
 			}
 			break;
+
+		case 2: 
+			if ( skill_timer != 0 ) {
+				skill_timer -= 1;
+			}
 		}
 		InvalidateRgn( hwnd, NULL, FALSE );
 		break;
@@ -359,6 +366,28 @@ void ProcessPacket( char *ptr )
 {
 	static bool first_time = true;
 	switch ( ptr[1] ) {
+	case SC_INFO: {
+		sc_packet_info *my_packet = reinterpret_cast<sc_packet_info *>(ptr);
+		int id = my_packet->id;
+		if ( id == g_myid ) {
+			player.hp = my_packet->hp;
+			player.exp = my_packet->exp;
+			player.level = my_packet->level;
+		}
+		else if ( id < NPC_START ) {
+			skelaton[id].hp = my_packet->hp;
+			skelaton[id].exp = my_packet->exp;
+			skelaton[id].level = my_packet->level;
+		}
+		else {
+			npc[id - NPC_START].hp = my_packet->hp;
+			npc[id - NPC_START].exp = my_packet->exp;
+			npc[id - NPC_START].level = my_packet->level;
+		}
+		InvalidateRgn( cpy_hwnd, NULL, FALSE );
+		break;
+	}
+
 	case SC_PUT_PLAYER: {
 		sc_packet_put_player *my_packet = reinterpret_cast<sc_packet_put_player *>(ptr);
 		int id = my_packet->id;
@@ -369,23 +398,17 @@ void ProcessPacket( char *ptr )
 		if ( id == g_myid ) {
 			player.x = my_packet->x;
 			player.y = my_packet->y;
-			player.hp = my_packet->hp;
-			player.level = my_packet->level;
 			player.direction = my_packet->direction;
 			player.attr |= BOB_ATTR_VISIBLE;
 		}
 		else if ( id < NPC_START ) {
 			skelaton[id].x = my_packet->x;
 			skelaton[id].y = my_packet->y;
-			skelaton[id].hp = my_packet->hp;
-			skelaton[id].level = my_packet->level;
 			skelaton[id].attr |= BOB_ATTR_VISIBLE;
 		}
 		else {
 			npc[id - NPC_START].x = my_packet->x;
 			npc[id - NPC_START].y = my_packet->y;
-			npc[id - NPC_START].hp = my_packet->hp;
-			npc[id - NPC_START].level = my_packet->level;
 			npc[id - NPC_START].attr |= BOB_ATTR_VISIBLE;
 #if (DebugMod == TRUE)
 			printf( "%d\t", id - NPC_START );
@@ -403,22 +426,20 @@ void ProcessPacket( char *ptr )
 			g_top_y = my_packet->y - 9;
 			player.x = my_packet->x;
 			player.y = my_packet->y;
-			player.hp = my_packet->hp;
 			player.direction = my_packet->direction;
 			player.movement = my_packet->movement;
 		}
 		else if ( other_id < NPC_START ) {
 			skelaton[other_id].x = my_packet->x;
 			skelaton[other_id].y = my_packet->y;
-			skelaton[other_id].hp = my_packet->hp;
 			skelaton[other_id].movement = my_packet->movement;
 			skelaton[other_id].direction = my_packet->direction;
 		}
 		else {
 			npc[other_id - NPC_START].x = my_packet->x;
 			npc[other_id - NPC_START].y = my_packet->y;
-			npc[other_id - NPC_START].hp = my_packet->hp;
 		}
+		InvalidateRgn( cpy_hwnd, NULL, FALSE );
 		break;
 	}
 
@@ -485,9 +506,9 @@ void Send_Attack_Packet( int skill_num, int damage ) {
 	my_packet->skill_num = 1;
 	my_packet->damage = damage;
 
-
-	int ret = WSASend( g_mysocket, &send_wsabuf, 1, &iobyte, 0, NULL, NULL );
-	if ( ret ) {
-		int error_code = WSAGetLastError();
-	}
+	skill_timer = 1;
+		int ret = WSASend( g_mysocket, &send_wsabuf, 1, &iobyte, 0, NULL, NULL );
+		if ( ret ) {
+			int error_code = WSAGetLastError();
+		}
 }

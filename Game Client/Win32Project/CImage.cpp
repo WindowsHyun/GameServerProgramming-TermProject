@@ -49,8 +49,8 @@ int nStartH = (p->Height - nTextH) / 2;   // 상하 가운데 정렬하기 위한 시작점 찾
 
 p->Canvas->TextOut(nStartW, nStartH, sStr);
 */
-void Character_Draw( HDC hdc, int x, int y, int direction, int movement, int hp ) {
-	sprintf( PrintData, "%d", hp );
+void Character_Draw( HDC hdc, int x, int y, int direction, int movement, int hp, int exp, int level ) {
+	sprintf( PrintData, "%d | %d | %d", hp , exp, level );
 	SetTextColor( hdc, RGB( 255, 0, 0 ) );
 	SetBkMode( hdc, TRANSPARENT );
 	SetTextAlign( hdc, TA_CENTER );

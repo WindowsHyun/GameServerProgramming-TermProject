@@ -1,0 +1,365 @@
+#define Monster_1 1050															// Monster01
+#define Monster_2 1080															// Monster02
+#define Monster_3 1100															// Monster03
+#define Monster_4 1120															// Monster04
+#define Monster_5 1140															// Monster05
+#define Monster_6 1190															// Monster06
+#define Monster_7 1240															// Monster07
+#define Monster_8 1340															// Monster08
+#define Monster_9 1440															// Monster09
+#define Monster_10 1540															// Monster10
+#define Monster_11 1590															// Monster11
+#define Monster_12 1640															// Monster12
+#define Monster_13 1690															// Monster13
+#define Monster_14 1790															// Monster14
+
+void init_Monster1() {
+	for ( int i = NPC_START; i < Monster_1; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 4, 45 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 50, 100 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 4, 45 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 50, 100 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 0;
+		g_clients[i].hp = 50;
+		g_clients[i].npc_type = N_Peace;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster2() {
+	for ( int i = Monster_1; i < Monster_2; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 93, 163 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 6, 23 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 93, 163 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 6, 23 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 1;
+		g_clients[i].hp = 100;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster3() {
+	for ( int i = Monster_2; i < Monster_3; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 137, 178 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 55, 76 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 137, 178 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 55, 76 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 0;
+		g_clients[i].hp = 50;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster4() {
+	for ( int i = Monster_3; i < Monster_4; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 137, 178 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 85, 106 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 137, 178 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 85, 106 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 1;
+		g_clients[i].hp = 100;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster5() {
+	for ( int i = Monster_4; i < Monster_5; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 137, 178 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 115, 130 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 137, 178 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 115, 130 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 2;
+		g_clients[i].hp = 150;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster6() {
+	for ( int i = Monster_5; i < Monster_6; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 225, 271 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 44, 76 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 225, 271 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 44, 76 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 3;
+		g_clients[i].hp = 200;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster7() {
+	for ( int i = Monster_6; i < Monster_7; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 199, 280 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 109, 132 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 199, 280 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 109, 132 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 4;
+		g_clients[i].hp = 250;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster8() {
+	for ( int i = Monster_7; i < Monster_8; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 37, 142 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 157, 212 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 37, 142 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 157, 212 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 5;
+		g_clients[i].hp = 300;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster9() {
+	for ( int i = Monster_8; i < Monster_9; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 209, 294 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 253, 295 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 209, 294 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 253, 295 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 6;
+		g_clients[i].hp = 350;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster10() {
+	for ( int i = Monster_9; i < Monster_10; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 6, 39 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 244, 286 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 6, 244 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 39, 286 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 4;
+		g_clients[i].hp = getRandomNumber( 100, 200 );
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster11() {
+	for ( int i = Monster_10; i < Monster_11; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 54, 108 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 260, 286 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 54, 108 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 260, 286 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 3;
+		g_clients[i].hp = getRandomNumber( 150, 250 );
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster12() {
+	for ( int i = Monster_11; i < Monster_12; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 123, 175 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 260, 286 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 123, 175 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 260, 286 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 4;
+		g_clients[i].hp = 250;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster13() {
+	for ( int i = Monster_12; i < Monster_13; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 40, 67 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 7, 31 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 40, 67 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 7, 31 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 1;
+		g_clients[i].hp = 150;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}
+
+void init_Monster14() {
+	for ( int i = Monster_13; i < Monster_14; ++i ) {
+		g_clients[i].connect = false;
+		g_clients[i].x = getRandomNumber( 183, 195 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+		g_clients[i].y = getRandomNumber( 151, 221 ); // 마찬가지
+		while ( CollisionCheck( i, CS_NPC ) == false ) {
+			g_clients[i].x = getRandomNumber( 183, 195 ); // 모든맵에 뿌려줘야지 안그러면 모든 npc가 겹쳐버림
+			g_clients[i].y = getRandomNumber( 151, 221 ); // 마찬가지
+		}
+
+		g_clients[i].last_move_time = std::chrono::high_resolution_clock::now(); // 라스트 무브 타임 초기화
+		g_clients[i].is_active = false;
+		g_clients[i].level = 1;
+		g_clients[i].hp = 150;
+		g_clients[i].npc_Attack = g_clients[i].hp / 10;
+		g_clients[i].npc_x = g_clients[i].x;
+		g_clients[i].npc_y = g_clients[i].y;
+
+		Timer_Event event = { i, high_resolution_clock::now() + 60s ,E_Responder };  // 몬스터 리스폰을 60초만다 한번씩 확인한다.
+		tq_lock.lock();
+		timer_queue.push( event );
+		tq_lock.unlock();
+	}
+}

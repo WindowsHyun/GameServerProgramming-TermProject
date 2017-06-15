@@ -6,6 +6,16 @@ extern "C" {
 #include "LUA\lualib.h"
 }
 
+int print_LUA( lua_State *L ) {
+	int my_id = (int)lua_tonumber( L, -3 );
+	int level = (int)lua_tonumber( L, -2 );
+	int hp = (int)lua_tonumber( L, -1 );
+	lua_pop( L, 4 );
+
+	std::cout << "id : " << my_id << " HP : " << hp << " Level : " << level<< std::endl;
+	return 0;
+}
+
 int API_get_x( lua_State *L ) {
 	int oid = (int)lua_tonumber( L, -1 );
 	lua_pop( L, 2 );
@@ -17,6 +27,13 @@ int API_get_y( lua_State *L ) {
 	int oid = (int)lua_tonumber( L, -1 );
 	lua_pop( L, 2 );
 	lua_pushnumber( L, g_clients[oid].y );
+	return 1;
+}
+
+int API_get_hp( lua_State *L ) {
+	int oid = (int)lua_tonumber( L, -1 );
+	lua_pop( L, 2 );
+	lua_pushnumber( L, g_clients[oid].hp );
 	return 1;
 }
 
