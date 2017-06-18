@@ -220,6 +220,10 @@ void Accept_Thread() {
 		g_clients[new_id].x = 9;
 		g_clients[new_id].y = 9;
 		g_clients[new_id].level = 1;
+		g_clients[new_id].skill_1 = 0;
+		g_clients[new_id].skill_2 = 0;
+		g_clients[new_id].skill_3 = 0;
+		g_clients[new_id].skill_4 = 0;
 		g_clients[new_id].hp_timer = 0;
 		g_clients[new_id].hp = getRandomNumber( 100, 1000 );
 		g_clients[new_id].Max_hp = g_clients[new_id].hp;
@@ -511,6 +515,11 @@ void check_Player_HP() {
 			g_clients[ci].hp = g_clients[ci].Max_hp;
 			SendPositionPacket( ci, ci );
 		}
+		if ( g_clients[ci].skill_1 != 0 )  g_clients[ci].skill_1 -= 1;
+		if ( g_clients[ci].skill_2 != 0 )  g_clients[ci].skill_2 -= 1;
+		if ( g_clients[ci].skill_3 != 0 )  g_clients[ci].skill_3 -= 1;
+		if ( g_clients[ci].skill_4 != 0 )  g_clients[ci].skill_4 -= 1;
+
 
 		//5초마다 10% hp 회복
 		if ( g_clients[ci].hp_timer >= 5 ) {

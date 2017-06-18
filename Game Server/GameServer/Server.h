@@ -116,6 +116,10 @@ struct CLIENT {
 	int hp_timer = 0;
 	int level;
 	int exp;
+	int skill_1 = 0;
+	int skill_2 = 0;
+	int skill_3 = 0;
+	int skill_4 = 0;
 	int direction = 2;
 	int movement = 0;
 	bool connect;

@@ -37,12 +37,14 @@ static int isGameData[Game_Width][Game_Height];						// 게임판 설정하기
 
 //--------------------------------------------------------------------------------------------------------------
 extern CImage m_image; // Map 이미지
+extern CImage m_Status; // 상태창
 extern CImage Ch_image[5]; // 본인 캐릭터
 extern CImage You_image[5]; // 상대방 캐릭터
 extern CImage Monster_image[10]; // 몬스터 캐릭터
 extern CImage Effect_image[5]; // 공격 이펙트
 
 void init_Image(); // 이미지 함수 로드
+void Status_Draw( HDC hdc);
 void cimage_draw( HDC hdc, int x, int y, int r_x, int r_y );
 void Character_Draw( HDC hdc, int x, int y, int direction, int movement, int hp, int exp, int level );
 void Character_You_Draw( HDC hdc, int x, int y, int direction, int movement, int hp );
@@ -66,13 +68,19 @@ typedef struct BOB_TYP {
 	int x, y;          // position bitmap will be displayed at
 	int attr;           // attributes pertaining to the object (general)
 	int hp;
+	int MaxHp;
 	int exp;
 	int level;
 	int direction = 2;		// 캐릭터 방향
 	int movement = 0;	// 캐릭터 움직임
 	int skill_num = -1;
-	int skill_timer = 0;
+	int skillTimer_1 = 0;
+	int skillTimer_2 = 0;
+	int skillTimer_3 = 0;
+	int skillTimer_4 = 0;
 	WCHAR message[256];
 	DWORD message_time;
 
 } BOB, *BOB_PTR;
+
+extern BOB player;				// 플레이어 Unit

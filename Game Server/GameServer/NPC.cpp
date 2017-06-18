@@ -211,11 +211,13 @@ void NPC_Responder( int id ) {
 }
 
 void Send_Monster_Attack_Chat( int ci, int npc ) {
-	char chatMSG[MAX_STR_SIZE];
-	g_clients[ci].hp -= g_clients[npc].npc_Attack;
-	sprintf( chatMSG, "몬스터가 용사에게 %d의 데미지를 입혔습니다.", g_clients[npc].npc_Attack );
-	SendPositionPacket( ci, ci ); // 체력이 소모 되었다는 것을 다시 보내주기 위해
-	SendChatPacket( ci, npc, ConverCtoWC( chatMSG ) );
+	if ( g_clients[npc].hp > 0 ) {
+		char chatMSG[MAX_STR_SIZE];
+		g_clients[ci].hp -= g_clients[npc].npc_Attack;
+		sprintf( chatMSG, "몬스터가 용사에게 %d의 데미지를 입혔습니다.", g_clients[npc].npc_Attack );
+		SendPositionPacket( ci, ci ); // 체력이 소모 되었다는 것을 다시 보내주기 위해
+		SendChatPacket( ci, npc, ConverCtoWC( chatMSG ) );
+	}
 }
 
 void Check_Attack_Client( int ci, int npc ) {
@@ -336,18 +338,26 @@ void Attack_Move( int npc, int ci, cs_packet_attack * my_packet ) {
 		timer_queue.push( event );
 		tq_lock.unlock(); // 락을 걸어주고 큐에 넣어줘야 된다
 	}
-	g_clients[npc].npc_Client = ci;
-	g_clients[npc].npc_recent_Client = ci;
-	g_clients[npc].hp -= my_packet->damage;
-	g_clients[npc].npc_dir = getRandomNumber( 0, 3 );
-	sprintf( chatMSG, "용사가 몬스터에게 %d의 데미지를 입혔습니다.", my_packet->damage );
-	SendChatPacket( ci, npc, ConverCtoWC( chatMSG ) );
+
+	if ( g_clients[npc].hp > 0 ) {
+		g_clients[npc].npc_Client = ci;
+		g_clients[npc].npc_recent_Client = ci;
+		g_clients[npc].hp -= my_packet->damage;
+		g_clients[npc].npc_dir = getRandomNumber( 0, 3 );
+		sprintf( chatMSG, "용사가 몬스터에게 %d의 데미지를 입혔습니다.", my_packet->damage );
+		SendChatPacket( ci, npc, ConverCtoWC( chatMSG ) );
+	}
 }
 
 void check_Attack( int ci, char * ptr ) {
 	// 플레이어가 NPC를 공격했는지 확인하기
 	int x = g_clients[ci].x, y = g_clients[ci].y;
 	cs_packet_attack *my_packet = reinterpret_cast<cs_packet_attack *>(ptr);
+
+	if ( my_packet->skill_num == 0 ) g_clients[ci].skill_1 = 1;
+	if ( my_packet->skill_num == 1 ) g_clients[ci].skill_2 = 2;
+	if ( my_packet->skill_num == 2 ) g_clients[ci].skill_3 = 3;
+	if ( my_packet->skill_num == 3 ) g_clients[ci].skill_4 = 4;
 
 	for ( int i = NPC_START; i < MAX_NPC; ++i ) {
 		if ( x - 1 == g_clients[i].x && y == g_clients[i].y ) {

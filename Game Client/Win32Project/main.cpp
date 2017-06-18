@@ -109,24 +109,24 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 
 	case WM_KEYDOWN:
 	{
-		if ( (wParam == 'a' || wParam == 'A') && skill_timer == 0 ) {
+		if ( (wParam == 'a' || wParam == 'A') && player.skillTimer_1 == 0 ) {
 			player.skill_num = 0;
-			Send_Attack_Packet( player.skill_num, 5 );
+			Send_Attack_Packet( player.skill_num, 5 + (player.level * 5) );
 			break;
 		}
-		if ( (wParam == 's' || wParam == 'S') && skill_timer == 0 ) {
+		if ( (wParam == 's' || wParam == 'S') && player.skillTimer_2 == 0 ) {
 			player.skill_num = 1;
-			Send_Attack_Packet( player.skill_num, 10 );
+			Send_Attack_Packet( player.skill_num, 10 + (player.level * 5) );
 			break;
 		}
-		if ( (wParam == 'd' || wParam == 'D' )&& skill_timer == 0 ) {
+		if ( (wParam == 'd' || wParam == 'D') && player.skillTimer_3 == 0 ) {
 			player.skill_num = 2;
-			Send_Attack_Packet( player.skill_num, 15 );
+			Send_Attack_Packet( player.skill_num, 15 + (player.level * 5) );
 			break;
 		}
-		if ( (wParam == 'f' || wParam == 'F') && skill_timer == 0 ) {
+		if ( (wParam == 'f' || wParam == 'F') && player.skillTimer_4 == 0 ) {
 			player.skill_num = 3;
-			Send_Attack_Packet( player.skill_num, 20 );
+			Send_Attack_Packet( player.skill_num, 20 + (player.level * 5) );
 			break;
 		}
 
@@ -232,7 +232,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 		TextOut( mem0dc, 0 + (strlen( isDebugData ) * 3.2), 740, isDebugData, strlen( isDebugData ) );
 
 		for ( int i = 0; i < MAX_Chat; ++i ) {
-			if ( chat_enabled[i] == true  ) {
+			if ( chat_enabled[i] == true ) {
 				SetTextColor( mem0dc, RGB( 0, 0, 255 ) );
 				SetBkMode( mem0dc, OPAQUE );
 				SetTextAlign( hdc, TA_TOP );
@@ -241,6 +241,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 			}
 		}
 
+		Status_Draw( mem0dc );
 
 		BitBlt( hdc, 0, 0, rt.right, rt.bottom, mem0dc, 0, 0, SRCCOPY );
 
@@ -257,11 +258,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 		switch ( wParam ) {
 		case 0:
 			if ( player.skill_num != -1 ) {
-				player.skill_timer += 1;
-				if ( player.skill_timer >= MAX_Skill_View ) {
-					KillTimer( hwnd, 0 );
-					player.skill_num = -1;
-				}
+				player.skill_num = -1;
 			}
 			break;
 		case 1:
@@ -277,7 +274,7 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 			}
 			break;
 
-		case 2: 
+		case 2:
 			if ( skill_timer != 0 ) {
 				skill_timer -= 1;
 			}
@@ -373,16 +370,29 @@ void ProcessPacket( char *ptr )
 			player.hp = my_packet->hp;
 			player.exp = my_packet->exp;
 			player.level = my_packet->level;
+			player.MaxHp = my_packet->MaxHp;
+			player.skillTimer_1 = my_packet->skill_1;
+			player.skillTimer_2 = my_packet->skill_2;
+			player.skillTimer_3 = my_packet->skill_3;
+			player.skillTimer_4 = my_packet->skill_4;
 		}
 		else if ( id < NPC_START ) {
 			skelaton[id].hp = my_packet->hp;
 			skelaton[id].exp = my_packet->exp;
 			skelaton[id].level = my_packet->level;
+			skelaton[id].skillTimer_1 = my_packet->skill_1;
+			skelaton[id].skillTimer_2 = my_packet->skill_2;
+			skelaton[id].skillTimer_3 = my_packet->skill_3;
+			skelaton[id].skillTimer_4 = my_packet->skill_4;
 		}
 		else {
 			npc[id - NPC_START].hp = my_packet->hp;
 			npc[id - NPC_START].exp = my_packet->exp;
 			npc[id - NPC_START].level = my_packet->level;
+			npc[id - NPC_START].skillTimer_1 = my_packet->skill_1;
+			npc[id - NPC_START].skillTimer_2 = my_packet->skill_2;
+			npc[id - NPC_START].skillTimer_3 = my_packet->skill_3;
+			npc[id - NPC_START].skillTimer_4 = my_packet->skill_4;
 		}
 		InvalidateRgn( cpy_hwnd, NULL, FALSE );
 		break;
@@ -496,19 +506,19 @@ void ProcessPacket( char *ptr )
 }
 
 void Send_Attack_Packet( int skill_num, int damage ) {
-	player.skill_timer = 0; // 스킬 타이머를 구현
+	//player.skill_timer = 0; // 스킬 타이머를 구현
 	SetTimer( cpy_hwnd, 0, 1, NULL );
 	cs_packet_attack *my_packet = reinterpret_cast<cs_packet_attack *>(send_buffer);
 	my_packet->size = sizeof( my_packet );
 	send_wsabuf.len = sizeof( my_packet );
 	DWORD iobyte;
 	my_packet->type = CS_Attack;
-	my_packet->skill_num = 1;
+	my_packet->skill_num = skill_num;
 	my_packet->damage = damage;
 
 	skill_timer = 1;
-		int ret = WSASend( g_mysocket, &send_wsabuf, 1, &iobyte, 0, NULL, NULL );
-		if ( ret ) {
-			int error_code = WSAGetLastError();
-		}
+	int ret = WSASend( g_mysocket, &send_wsabuf, 1, &iobyte, 0, NULL, NULL );
+	if ( ret ) {
+		int error_code = WSAGetLastError();
+	}
 }

@@ -6,10 +6,12 @@ CImage Ch_image[5]; // 본인 캐릭터
 CImage You_image[5]; // 상대방 캐릭터
 CImage Monster_image[10]; // 몬스터 캐릭터
 CImage Effect_image[5]; // 공격 이펙트
+CImage m_Status; // 상태창
 char PrintData[100];
 
 void init_Image() {
 	m_image.Load( "Image\\Map\\FullMap.png" );
+	m_Status.Load( "Image\\Map\\Status.png" );
 	Ch_image[CS_UP].Load( "Image\\Character\\Character_Up.png" );
 	Ch_image[CS_DOWN].Load( "Image\\Character\\Character_Down.png" );
 	Ch_image[CS_LEFT].Load( "Image\\Character\\Character_Left.png" );
@@ -34,6 +36,31 @@ void init_Image() {
 
 void cimage_draw( HDC hdc, int x, int y, int r_x, int r_y ) {
 	m_image.Draw( hdc, 0 + (x * 40), 0 + (y * 40), 40, 40, 0 + (r_x * 16), 0 + (r_y * 16), 16, 16 );
+}
+
+void Status_Draw( HDC hdc ) {
+	m_Status.Draw( hdc, 0, 0, 200, 120, 0, 0, m_Status.GetWidth(), m_Status.GetHeight() );
+	SetTextColor( hdc, RGB( 0, 0, 255 ) );
+	SetBkMode( hdc, TRANSPARENT );
+	SetTextAlign( hdc, TA_LEFT );
+	sprintf( PrintData, "LV.%d", player.level );
+	TextOut( hdc, 156, 8, PrintData, strlen( PrintData ) );
+	sprintf( PrintData, "WindowsHyun" );
+	TextOut( hdc, 13, 8, PrintData, strlen( PrintData ) );
+	sprintf( PrintData, "%d / %d", player.hp , player.MaxHp );
+	TextOut( hdc, 13, 38, PrintData, strlen( PrintData ) );
+
+	sprintf( PrintData, "%ds", player.skillTimer_1 );
+	TextOut( hdc, 18, 94, PrintData, strlen( PrintData ) );
+
+	sprintf( PrintData, "%ds", player.skillTimer_2 );
+	TextOut( hdc, 66, 94, PrintData, strlen( PrintData ) );
+
+	sprintf( PrintData, "%ds", player.skillTimer_3 );
+	TextOut( hdc, 117, 94, PrintData, strlen( PrintData ) );
+
+	sprintf( PrintData, "%ds", player.skillTimer_4 );
+	TextOut( hdc, 166, 94, PrintData, strlen( PrintData ) );
 }
 
 /*

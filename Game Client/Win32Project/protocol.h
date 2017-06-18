@@ -47,8 +47,13 @@ struct sc_packet_info {
 	BYTE type;
 	WORD id;
 	BOOL hp;
+	BOOL MaxHp;
 	BOOL level;
 	BOOL exp;
+	BYTE skill_1;
+	BYTE skill_2;
+	BYTE skill_3;
+	BYTE skill_4;
 };
 
 struct sc_packet_remove_player {

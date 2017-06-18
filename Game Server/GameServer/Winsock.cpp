@@ -66,8 +66,13 @@ void SendInfoPacket( int client, int object ) {
 	packet.size = sizeof( packet );
 	packet.type = SC_INFO;
 	packet.hp = g_clients[object].hp;
+	packet.MaxHp = g_clients[object].Max_hp;
 	packet.level = g_clients[object].level;
 	packet.exp = g_clients[object].exp;
+	packet.skill_1 = g_clients[object].skill_1;
+	packet.skill_2 = g_clients[object].skill_2;
+	packet.skill_3 = g_clients[object].skill_3;
+	packet.skill_4 = g_clients[object].skill_4;
 	SendPacket( client, &packet );
 }
 
