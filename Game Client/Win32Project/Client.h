@@ -11,7 +11,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
-#define DebugMod TRUE													// 개발 할경우 True
+#define DebugMod FALSE													// 개발 할경우 True
 #define SERVERPORT 9000
 #define BUF_SIZE				1024
 #define MAX_BUFF_SIZE   4000
@@ -32,6 +32,7 @@
 #define BOB_ATTR_VISIBLE        16  // bob is visible
 
 extern char ipAddres[MAX_PATH];
+extern char game_id[MAX_PATH];
 static int isGameData[Game_Width][Game_Height];						// 게임판 설정하기
 
 
@@ -61,6 +62,7 @@ void clienterror();
 void ReadPacket( SOCKET sock );
 void ProcessPacket( char *ptr );
 void Send_Attack_Packet( int skill_num, int damage );
+void Send_Move_Packet( int x, int y );
 
 BOOL CALLBACK DlgProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam );
 

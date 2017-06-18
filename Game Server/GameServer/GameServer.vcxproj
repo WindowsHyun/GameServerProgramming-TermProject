@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DB.cpp" />
     <ClCompile Include="GameServer.cpp" />
     <ClCompile Include="Lua.cpp" />
     <ClCompile Include="Map.cpp" />

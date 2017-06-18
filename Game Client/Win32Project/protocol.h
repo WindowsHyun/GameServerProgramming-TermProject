@@ -14,6 +14,7 @@
 #define CS_RIGHT    4
 #define CS_CHAT		5
 #define CS_Attack		6
+#define CS_Move		7
 
 struct cs_packet_up {
 	BYTE size;
@@ -74,4 +75,11 @@ struct cs_packet_attack {
 	BYTE type;
 	BYTE skill_num;
 	BYTE damage;
+};
+
+struct cs_packet_Move {
+	BYTE size;
+	BYTE type;
+	BYTE x;
+	BYTE y;
 };

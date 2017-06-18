@@ -16,15 +16,17 @@ int init_count[14]{ 50, 30, 20, 20, 20, 50, 50, 100, 100, 100, 50, 50, 50, 100 }
 
 void Send_Add_EXP( int ci, int npc ) {
 	char chatMSG[MAX_STR_SIZE];
-	int exp = (g_clients[ci].level * 5) + (g_clients[npc].level+1) * 5;
-	if ( g_clients[npc].npc_type == N_War || g_clients[npc].level >= 1 ) {
-		exp *= 2;
+	if ( g_clients[ci].connect == true ) {
+		int exp = (g_clients[ci].level * 5) + (g_clients[npc].level + 1) * 5;
+		if ( g_clients[npc].npc_type == N_War || g_clients[npc].level >= 1 ) {
+			exp *= 2;
+		}
+		exp *= 10;
+		g_clients[ci].exp += exp;
+		sprintf( chatMSG, "몬스터 %d를 무찔러서 %d[+%d]의 경험치를 얻었습니다.", npc, exp - (g_clients[npc].level + 1) * 5, (g_clients[npc].level + 1) * 5 );
+		SendPositionPacket( ci, ci );
+		SendChatPacket( ci, npc, ConverCtoWC( chatMSG ) );
 	}
-	exp *= 10;
-	g_clients[ci].exp += exp;
-	sprintf( chatMSG, "몬스터 %d를 무찔러서 %d[+%d]의 경험치를 얻었습니다.", npc, exp - (g_clients[npc].level + 1) * 5, (g_clients[npc].level + 1) * 5 );
-	SendPositionPacket( ci, ci );
-	SendChatPacket( ci, npc, ConverCtoWC( chatMSG ) );
 }
 
 void check_Monster_HP(int npc) {

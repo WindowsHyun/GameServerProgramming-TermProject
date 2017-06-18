@@ -109,6 +109,20 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 
 	case WM_KEYDOWN:
 	{
+		if ( wParam == '1' || wParam == '2' || wParam == '3' || wParam == '4' || wParam == '5' ) {
+			// 1 = (21, 77)
+			// 2 = (129,14)
+			// 3 = (247,59)
+			// 4 = (81, 184)
+			// 5 = (253, 282)
+			if ( wParam == '1' )Send_Move_Packet( 21, 77 );
+			if ( wParam == '2' )Send_Move_Packet( 129, 14 );
+			if ( wParam == '3' )Send_Move_Packet( 247, 59 );
+			if ( wParam == '4' )Send_Move_Packet( 81, 184 );
+			if ( wParam == '5' )Send_Move_Packet( 245, 232 );
+			break;
+		}
+
 		if ( (wParam == 'a' || wParam == 'A') && player.skillTimer_1 == 0 ) {
 			player.skill_num = 0;
 			Send_Attack_Packet( player.skill_num, 5 + (player.level * 5) );
@@ -196,17 +210,12 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 		hbmMemOld = (HBITMAP)SelectObject( mem0dc, hbmMem );//4
 		mem1dc = CreateCompatibleDC( mem0dc );//5
 
-		//printf( "%d,%d\t", g_left_x, g_top_y );
 
 		for ( int i = 0; i < SightSeeWidth; ++i ) {
 			for ( int j = 0; j < SightSeeHeight; ++j ) {
 				cimage_draw( mem0dc, i, j, i + g_left_x, j + g_top_y );
 			}
 		}
-
-		sprintf( isDebugData, "Postion : %d, %d [%d]", player.x, player.y, player.movement );
-
-
 
 		for ( int i = 0; i < MAX_Client; ++i ) {
 			if ( (skelaton[i].attr & BOB_ATTR_VISIBLE) ) {
@@ -226,11 +235,13 @@ LRESULT CALLBACK WndProc( HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM  lParam ) 
 
 		Character_Draw( mem0dc, 9, 9, player.direction, player.movement, player.hp, player.exp, player.level );
 
+#if (DebugMod == TRUE)
+		sprintf( isDebugData, "Postion : %d, %d [%d]", player.x, player.y, player.movement );
 		SetTextColor( mem0dc, RGB( 255, 0, 0 ) );
 		SetBkMode( mem0dc, OPAQUE );
 		SetTextAlign( hdc, TA_TOP );
 		TextOut( mem0dc, 0 + (strlen( isDebugData ) * 3.2), 740, isDebugData, strlen( isDebugData ) );
-
+#endif
 		for ( int i = 0; i < MAX_Chat; ++i ) {
 			if ( chat_enabled[i] == true ) {
 				SetTextColor( mem0dc, RGB( 0, 0, 255 ) );
@@ -312,12 +323,33 @@ void init() {
 
 	int Result = WSAConnect( g_mysocket, (sockaddr *)&ServerAddr, sizeof( ServerAddr ), NULL, NULL, NULL, NULL );
 
-	WSAAsyncSelect( g_mysocket, main_window_handle, WM_SOCKET, FD_CLOSE | FD_READ );
-
+	//------------------------------------------------------------------------------------------------------------------
 	send_wsabuf.buf = send_buffer;
 	send_wsabuf.len = BUF_SIZE;
 	recv_wsabuf.buf = recv_buffer;
 	recv_wsabuf.len = BUF_SIZE;
+
+	int retval = send( g_mysocket, game_id, strlen( game_id ), 0 );
+	char buf[10];
+	retval = recv( g_mysocket, buf, 10, 0 );
+	buf[retval] = '\0';
+
+	if ( strcmp( buf, "False" ) == 0 ) {
+		MessageBox( cpy_hwnd, "DB에서 ID,PW를 확인할 수 없습니다..!\n프로그램을 종료합니다.", "DB 오류", MB_OK );
+		exit( -1 );
+	}
+	else if ( strcmp( buf, "Overlap" ) == 0 ) {
+		MessageBox( cpy_hwnd, "이미 접속유저가 있습니다..!\n프로그램을 종료합니다.", "DB 접속", MB_OK );
+		exit( -1 );
+	}
+	else if ( strcmp( buf, "Newid" ) == 0 ) {
+		MessageBox( cpy_hwnd, "아이디가 없습니다.\nID를 만들어서 게임을 시작합니다.", "DB 생성", MB_OK );
+	}
+
+	//------------------------------------------------------------------------------------------------------------------
+	WSAAsyncSelect( g_mysocket, main_window_handle, WM_SOCKET, FD_CLOSE | FD_READ );
+
+
 
 #if (DebugMod == TRUE)
 	err_display( "Connect : ", Result );
@@ -408,6 +440,8 @@ void ProcessPacket( char *ptr )
 		if ( id == g_myid ) {
 			player.x = my_packet->x;
 			player.y = my_packet->y;
+			g_left_x = my_packet->x - 9;
+			g_top_y = my_packet->y - 9;
 			player.direction = my_packet->direction;
 			player.attr |= BOB_ATTR_VISIBLE;
 		}
@@ -517,6 +551,21 @@ void Send_Attack_Packet( int skill_num, int damage ) {
 	my_packet->damage = damage;
 
 	skill_timer = 1;
+	int ret = WSASend( g_mysocket, &send_wsabuf, 1, &iobyte, 0, NULL, NULL );
+	if ( ret ) {
+		int error_code = WSAGetLastError();
+	}
+}
+
+void Send_Move_Packet( int x, int y ) {
+	cs_packet_Move *my_packet = reinterpret_cast<cs_packet_Move *>(send_buffer);
+	my_packet->size = sizeof( my_packet );
+	send_wsabuf.len = sizeof( my_packet );
+	DWORD iobyte;
+	my_packet->type = CS_Move;
+	my_packet->x = x;
+	my_packet->y = y;
+
 	int ret = WSASend( g_mysocket, &send_wsabuf, 1, &iobyte, 0, NULL, NULL );
 	if ( ret ) {
 		int error_code = WSAGetLastError();

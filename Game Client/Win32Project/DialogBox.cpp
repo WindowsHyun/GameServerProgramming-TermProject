@@ -4,6 +4,7 @@ HWND hwndOwner;
 RECT rc, rcDlg, rcOwner;
 HWND ipAddr, CharName;
 char ipAddres[MAX_PATH] = "127.0.0.1";
+char game_id[MAX_PATH] = "kch";
 
 BOOL CALLBACK DlgProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 	switch ( uMsg ) {
@@ -24,8 +25,10 @@ BOOL CALLBACK DlgProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 		SetWindowPos( hDlg, HWND_TOP, rcOwner.left + (rc.right / 2), rcOwner.top + (rc.bottom / 2), 0, 0, SWP_NOSIZE );
 		//-------------------------------------------------------------------------------------------------------------------------------------
 		ipAddr = GetDlgItem( hDlg, IDC_EDIT1 );
+		CharName = GetDlgItem( hDlg, IDC_EDIT2 );
 
 		SetDlgItemText( hDlg, IDC_EDIT1, ipAddres );
+		SetDlgItemText( hDlg, IDC_EDIT2, game_id );
 		return TRUE;
 
 	case WM_COMMAND:
@@ -33,11 +36,13 @@ BOOL CALLBACK DlgProc( HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
 		switch ( LOWORD( wParam ) ) {
 		case IDC_BUTTON1:
 			GetWindowText( ipAddr, ipAddres, MAX_PATH );
+			GetWindowText( CharName, game_id, MAX_PATH );
 			EndDialog( hDlg, IDCANCEL );
 			return TRUE;
 
 		case IDCANCEL:
-			MessageBox( NULL, "연결을 하셔야 종료를 할 수 있습니다..!", "", 0 );
+			exit( -1 );
+			//MessageBox( NULL, "연결을 하셔야 종료를 할 수 있습니다..!", "", 0 );
 			return TRUE;
 
 		}

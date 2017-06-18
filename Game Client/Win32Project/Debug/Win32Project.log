@@ -1,17 +1,12 @@
 ﻿  main.cpp
 c:\program files (x86)\windows kits\8.1\include\um\dbghelp.h(1544): warning C4091: 'typedef ': 변수를 선언하지 않으면 '' 왼쪽은 무시됩니다.
 c:\program files (x86)\windows kits\8.1\include\um\dbghelp.h(3190): warning C4091: 'typedef ': 변수를 선언하지 않으면 '' 왼쪽은 무시됩니다.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(232): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(240): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(175): warning C4996: 'freopen': This function or variable may be unsafe. Consider using freopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(240): note: 'freopen' 선언을 참조하십시오.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(207): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: 'sprintf' 선언을 참조하십시오.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(305): warning C4996: 'WSASocketA': Use WSASocketW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(251): warning C4244: '인수': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(316): warning C4996: 'WSASocketA': Use WSASocketW() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(3457): note: 'WSASocketA' 선언을 참조하십시오.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(311): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(322): warning C4996: 'inet_addr': Use inet_pton() or InetPton() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(1850): note: 'inet_addr' 선언을 참조하십시오.
-e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(315): warning C4996: 'WSAAsyncSelect': Use WSAEventSelect() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
+e:\★텍스트자료\onedrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#term\game client\win32project\main.cpp(350): warning C4996: 'WSAAsyncSelect': Use WSAEventSelect() instead or define _WINSOCK_DEPRECATED_NO_WARNINGS to disable deprecated API warnings
   c:\program files (x86)\windows kits\8.1\include\um\winsock2.h(2699): note: 'WSAAsyncSelect' 선언을 참조하십시오.
   Win32Project.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Game Client\Debug\Win32Project.exe
   Win32Project.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Game Client\Debug\Win32Project.pdb (Full PDB)

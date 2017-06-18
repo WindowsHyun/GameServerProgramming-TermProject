@@ -19,7 +19,7 @@ std::chrono::high_resolution_clock::time_point serverTimer;
 int main() {
 	std::vector <std::thread * > worker_threads;
 	init();
-	check_Player_Level(0);
+	check_Player_Level( 0 );
 	serverTimer = high_resolution_clock::now();
 
 	std::thread TimerThread{ Timer_Thread };
@@ -44,6 +44,7 @@ void init() {
 	std::wcout.imbue( std::locale( "korean" ) );
 	read_map();
 	init_NPC();
+	init_DB();
 
 	WSADATA	wsadata;
 	WSAStartup( MAKEWORD( 2, 2 ), &wsadata );
@@ -206,6 +207,49 @@ void Accept_Thread() {
 			closesocket( new_client );
 			continue;
 		}
+
+		char  buf[255];
+		int retval = recv( new_client, buf, 10, 0 );
+		if ( retval == SOCKET_ERROR ) {
+			std::cout << "Not Recv Game_ID : " << new_id << std::endl;
+			closesocket( new_client );
+			continue;
+		}
+		buf[retval] = '\0';
+
+		strcpy( g_clients[new_id].game_id, buf );
+#if (DebugMod == TRUE )
+		printf( "Game ID : %s\n", game_id );
+#endif
+
+
+		int is_accept = get_DB_Info( new_id );
+		if ( is_accept == DB_Success  && db_connect == 0 ) {
+			strcpy( buf, "Okay" );
+			retval = send( new_client, buf, strlen( buf ), 0 );
+		}
+		else if ( is_accept == DB_NoConnect ) {
+			strcpy( buf, "False" );
+			retval = send( new_client, buf, strlen( buf ), 0 );
+		}
+		else if ( db_connect == 1 ) {
+			strcpy( buf, "Overlap" );
+			retval = send( new_client, buf, strlen( buf ), 0 );
+			closesocket( new_client );
+			continue;
+		}
+		else if ( is_accept == DB_NoData ) {
+			strcpy( buf, "Newid" );
+			g_clients[new_id].x = 9;
+			g_clients[new_id].y = 9;
+			g_clients[new_id].exp = 0;
+			g_clients[new_id].level = 1;
+			g_clients[new_id].hp = getRandomNumber(500,1000);
+			g_clients[new_id].Max_hp = g_clients[new_id].hp;
+			new_DB_Id( new_id );
+			get_DB_Info( new_id );
+			retval = send( new_client, buf, strlen( buf ), 0 );
+		}
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
 		// 들어온 접속 아이디 init 처리
 		std::cout << "id : " << new_id << std::endl;
@@ -217,16 +261,16 @@ void Accept_Thread() {
 		g_clients[new_id].recv_over.event_type = OP_RECV;
 		g_clients[new_id].recv_over.wsabuf.buf = reinterpret_cast<CHAR *>(g_clients[new_id].recv_over.IOCP_buf);
 		g_clients[new_id].recv_over.wsabuf.len = sizeof( g_clients[new_id].recv_over.IOCP_buf );
-		g_clients[new_id].x = 9;
-		g_clients[new_id].y = 9;
-		g_clients[new_id].level = 1;
-		g_clients[new_id].skill_1 = 0;
-		g_clients[new_id].skill_2 = 0;
-		g_clients[new_id].skill_3 = 0;
-		g_clients[new_id].skill_4 = 0;
+		g_clients[new_id].x = db_x;
+		g_clients[new_id].y = db_y;
+		g_clients[new_id].level = db_level;
+		g_clients[new_id].skill_1 = db_skill[0];
+		g_clients[new_id].skill_2 = db_skill[1];
+		g_clients[new_id].skill_3 = db_skill[2];
+		g_clients[new_id].skill_4 = db_skill[3];
 		g_clients[new_id].hp_timer = 0;
-		g_clients[new_id].hp = getRandomNumber( 100, 1000 );
-		g_clients[new_id].Max_hp = g_clients[new_id].hp;
+		g_clients[new_id].hp = db_hp;
+		g_clients[new_id].Max_hp = db_maxhp;
 		g_clients[new_id].direction = 2;
 		g_clients[new_id].movement = 0;
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -283,6 +327,7 @@ void Shutdown_Server() {
 
 void DisconnectClient( int ci ) {
 	closesocket( g_clients[ci].client_socket );
+	set_DB_Shutdown( ci );
 	g_clients[ci].connect = false;
 
 	std::unordered_set<int> lvl;
@@ -346,13 +391,16 @@ void ProcessPacket( int ci, char *packet ) {
 		//printf( "%d가 공격 %d만큼\n",ci, my_packet->damage );
 		check_Attack( ci, packet );
 		break;
-
+	case CS_Move:
+		//printf( "%d가 공격 %d만큼\n",ci, my_packet->damage );
+		Teleport_Move( ci, packet );
+		break;
 	default:
 #if (DebugMod == TRUE )
 		printf( "Unknown Packet Type from Client : %d -> %d", ci, packet[1] );
 #endif
 		exit( -1 );
-	}
+		}
 
 	if ( g_clients[ci].movement >= 3 ) g_clients[ci].movement = 0; // 움직임은 0~2까지 있다.
 
@@ -454,7 +502,7 @@ void ProcessPacket( int ci, char *packet ) {
 			over->target_id = ci;
 			PostQueuedCompletionStatus( g_hiocp, 1, npc, &over->over );
 		}
-}
+	}
 
 bool Distance( int me, int  you, int Radius ) {
 	return (g_clients[me].x - g_clients[you].x) * (g_clients[me].x - g_clients[you].x) +
@@ -520,6 +568,7 @@ void check_Player_HP() {
 		if ( g_clients[ci].skill_3 != 0 )  g_clients[ci].skill_3 -= 1;
 		if ( g_clients[ci].skill_4 != 0 )  g_clients[ci].skill_4 -= 1;
 
+		set_DB_Info( ci );
 
 		//5초마다 10% hp 회복
 		if ( g_clients[ci].hp_timer >= 5 ) {
@@ -532,6 +581,8 @@ void check_Player_HP() {
 			}
 		}
 		g_clients[ci].hp_timer += 1;
+
+
 		check_Player_Level( ci );
 		SendInfoPacket( ci, ci );
 	}
@@ -553,8 +604,18 @@ void check_Player_Level( int ci ) {
 	}
 
 	if ( g_clients[ci].exp >= exp_data ) {
-		g_clients[ci].exp -= exp_data;
+		g_clients[ci].exp = 0;
+		g_clients[ci].Max_hp += (g_clients[ci].level * 20);
+		g_clients[ci].hp = g_clients[ci].Max_hp;
 		g_clients[ci].level += 1;
 	}
 
+}
+
+void Teleport_Move( int ci, char * ptr ) {
+	cs_packet_Move *my_packet = reinterpret_cast<cs_packet_Move *>(ptr);
+	g_clients[ci].x = my_packet->x;
+	g_clients[ci].y = my_packet->y;
+
+	SendPositionPacket( ci, ci );
 }

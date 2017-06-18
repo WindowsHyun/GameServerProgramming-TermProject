@@ -18,6 +18,8 @@
 #include <unordered_set> // 성능이 더 좋아진다. [순서가 상관없을경우]
 #include <random>
 #include <chrono>
+#include <windows.h>  
+#include <sqlext.h>  
 
 extern "C" {
 #include "LUA\lua.h"
@@ -66,6 +68,7 @@ bool Distance( int me, int  you, int Radius );
 bool IsPlayer( int ci );
 void check_Player_HP();
 void check_Player_Level( int ci );
+void Teleport_Move( int ci, char * ptr );
 
 void Timer_Thread();
 void init_NPC(); // npc 초기화 함수
@@ -86,6 +89,14 @@ char * ConvertWCtoC( wchar_t* str );
 wchar_t* ConverCtoWC( char* str );
 
 //------------------------------------------------------------
+// DB_init
+void init_DB();
+extern int db_x, db_y, db_level, db_hp, db_maxhp, db_exp, db_skill[4], db_connect;
+int get_DB_Info( int ci );
+void set_DB_Info( int ci );
+void set_DB_Shutdown( int ci );
+void new_DB_Id( int ci );
+//------------------------------------------------------------
 // 맵 충돌체크를 위하여 보관
 extern int map[Game_Width][Game_Height];
 extern int Tile1[Game_Width][Game_Height];
@@ -99,6 +110,7 @@ enum OPTYPE { OP_SEND, OP_RECV, OP_DO_AI, E_PLAYER_MOVE_NOTIFY, OP_Attack_Move, 
 enum Event_Type { E_MOVE, E_Attack_Move, E_Responder };
 enum NPC_Type { N_Peace, N_War };
 enum NPC_EXP { No_Send_EXP, Yes_Send_EXP };
+enum DB_Info { DB_Success, DB_NoData, DB_NoConnect, DB_Overlap };
 
 struct OverlappedEx {
 	WSAOVERLAPPED over;
@@ -111,6 +123,7 @@ struct OverlappedEx {
 struct CLIENT {
 	int x;
 	int y;
+	char game_id[10]; // 클라에서 받아온 게임아이디를 저장
 	int hp;
 	int Max_hp;
 	int hp_timer = 0;

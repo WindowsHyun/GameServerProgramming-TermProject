@@ -15,6 +15,7 @@
 #define CS_CHAT		5
 #define CS_NPC		6	// 겹쳐도 상관없다. 어차피 충돌체크시에 확인할 부분이였다.
 #define CS_Attack		6
+#define CS_Move		7
 
 // BYTE를 255까지만 인식하여 int형인 BOOL로 수정
 
@@ -76,6 +77,13 @@ struct cs_packet_attack {
 	BYTE type;
 	BYTE skill_num;
 	BYTE damage;
+};
+
+struct cs_packet_Move {
+	BYTE size;
+	BYTE type;
+	BYTE x;
+	BYTE y;
 };
 
 #endif

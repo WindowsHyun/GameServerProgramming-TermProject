@@ -45,10 +45,13 @@ void Status_Draw( HDC hdc ) {
 	SetTextAlign( hdc, TA_LEFT );
 	sprintf( PrintData, "LV.%d", player.level );
 	TextOut( hdc, 156, 8, PrintData, strlen( PrintData ) );
-	sprintf( PrintData, "WindowsHyun" );
+	sprintf( PrintData, "%s", game_id );
 	TextOut( hdc, 13, 8, PrintData, strlen( PrintData ) );
-	sprintf( PrintData, "%d / %d", player.hp , player.MaxHp );
+	sprintf( PrintData, "%d / %d", player.hp, player.MaxHp );
 	TextOut( hdc, 13, 38, PrintData, strlen( PrintData ) );
+
+	sprintf( PrintData, "%d", player.exp );
+	TextOut( hdc, 156, 38, PrintData, strlen( PrintData ) );
 
 	sprintf( PrintData, "%ds", player.skillTimer_1 );
 	TextOut( hdc, 18, 94, PrintData, strlen( PrintData ) );
@@ -77,11 +80,13 @@ int nStartH = (p->Height - nTextH) / 2;   // 상하 가운데 정렬하기 위한 시작점 찾
 p->Canvas->TextOut(nStartW, nStartH, sStr);
 */
 void Character_Draw( HDC hdc, int x, int y, int direction, int movement, int hp, int exp, int level ) {
-	sprintf( PrintData, "%d | %d | %d", hp , exp, level );
+#if (DebugMod == TRUE)
+	sprintf( PrintData, "%d | %d | %d", hp, exp, level );
 	SetTextColor( hdc, RGB( 255, 0, 0 ) );
 	SetBkMode( hdc, TRANSPARENT );
 	SetTextAlign( hdc, TA_CENTER );
 	TextOut( hdc, 20 + (x * 40), -14 + (y * 40), PrintData, strlen( PrintData ) );
+#endif
 	Ch_image[direction].Draw( hdc, 0 + (x * 40), 0 + (y * 40), 40, 40, 0 + (movement * 23), 0, 23, 29 );
 }
 

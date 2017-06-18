@@ -1,16 +1,19 @@
 ﻿  GameServer.cpp
-GameServer.cpp(74): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 GameServer.cpp(80): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-GameServer.cpp(131): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  Lua.cpp
-  Map.cpp
-  NPC.cpp
-  Winsock.cpp
+GameServer.cpp(86): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(136): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(138): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(158): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(162): warning C4244: '인수': 'unsigned __int64'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(229): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(233): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(237): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+GameServer.cpp(251): warning C4267: '인수': 'size_t'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 LINK : warning LNK4098: 'LIBCMT' defaultlib가 다른 라이브러리와 충돌합니다. /NODEFAULTLIB:library를 사용하십시오.
   코드를 생성하고 있습니다.
-  5 of 674 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
+  12 of 708 functions ( 1.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    8 functions had inline decision re-evaluated but remain unchanged
+    17 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Server\x64\Release\GameServer.exe
-  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Server\x64\Release\GameServer.pdb (Full PDB)
+  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Game Server\x64\Release\GameServer.exe
+  GameServer.vcxproj -> E:\★텍스트자료\OneDrive\2017년도 4학년 1학기\게임서버프로그래밍\텀프로젝트#Term\Game Server\x64\Release\GameServer.pdb (Full PDB)
